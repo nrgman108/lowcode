@@ -1,3 +1,5 @@
+import './styles.css';
+
 (() => {
   // Подсветка карточек за курсором
   document.querySelectorAll('.card').forEach((card) => {
