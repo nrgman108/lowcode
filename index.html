@@ -62,6 +62,7 @@
     <div class="nav-inner">
       <a href="#where">Где запускать</a>
       <a href="#can">Возможности</a>
+      <a href="#cases">Сценарии</a>
       <a href="#cli">Терминал</a>
       <a href="#env">Окружение</a>
       <a href="#tools">Инструменты</a>
@@ -150,6 +151,104 @@
         <div class="step"><h3>Claude работает</h3><p>Читает код, пишет файлы, запускает команды, при необходимости делит работу между субагентами.</p></div>
         <div class="step"><h3>Проверка</h3><p>Тесты, линтер, сборка, скриншоты в браузере. Сначала доказать, потом пушить.</p></div>
         <div class="step"><h3>Пуш и ревью</h3><p>Изменения в ветке, дифф в карточке Changes, пулл-реквест по кнопке.</p></div>
+      </div>
+    </section>
+
+    <section id="cases">
+      <div class="sec-head">
+        <div class="eyebrow">Сценарии</div>
+        <h2>Что отдать облаку</h2>
+        <p>Типовые задачи из документации Claude Code. Облако подходит для работы, которую можно отдать целиком: понятный результат, проверка тестами, без постоянного участия человека.</p>
+      </div>
+      <h3 class="sub">Разовые задачи</h3>
+      <div class="cases">
+        <article class="case">
+          <span class="chip c-session">Сессия</span>
+          <h3>Починить баг по описанию</h3>
+          <p>Опишите симптом и где искать. Claude воспроизводит баг, правит код, прогоняет тесты и пушит ветку.</p>
+          <div class="case-prompt"><span>›</span> Почини баг авторизации в src/auth/login.ts</div>
+        </article>
+        <article class="case">
+          <span class="chip c-session">Сессия</span>
+          <h3>Вылечить нестабильный тест</h3>
+          <p>Claude гоняет тест много раз, находит причину нестабильности и исправляет её, не отключая тест.</p>
+          <div class="case-prompt"><span>›</span> Почини нестабильный тест auth.spec.ts</div>
+        </article>
+        <article class="case">
+          <span class="chip c-session">Сессия</span>
+          <h3>Рефакторинг</h3>
+          <p>Механическая, но объёмная работа по всему репозиторию с проверкой тестами после каждого шага.</p>
+          <div class="case-prompt"><span>›</span> Переведи логгер на структурированный вывод</div>
+        </article>
+        <article class="case">
+          <span class="chip c-session">Сессия</span>
+          <h3>Обновить документацию</h3>
+          <p>Claude сверяет README и описание API с реальным кодом и исправляет то, что устарело.</p>
+          <div class="case-prompt"><span>›</span> Обнови документацию API</div>
+        </article>
+        <article class="case">
+          <span class="chip c-plan">По плану</span>
+          <h3>Выполнить готовый план</h3>
+          <p>План обсуждается локально в режиме plan и коммитится в репозиторий, а долгое выполнение уходит в облако.</p>
+          <div class="case-prompt"><span>›</span> Выполни план миграции из docs/migration-plan.md</div>
+        </article>
+        <article class="case">
+          <span class="chip c-plan">Параллельно</span>
+          <h3>Несколько задач сразу</h3>
+          <p>Каждая команда <code>claude --cloud</code> запускает отдельную сессию. Пока они работают, вы занимаетесь своим.</p>
+          <div class="case-prompt"><span>›</span> три команды --cloud подряд: тест, документация, логгер</div>
+        </article>
+        <article class="case">
+          <span class="chip c-github">Авто-фикс</span>
+          <h3>Довести PR до зелёного</h3>
+          <p>Claude следит за пулл-реквестом, чинит упавший CI и отвечает на комментарии ревьюеров. Неоднозначное сначала уточняет у вас.</p>
+          <div class="case-prompt"><span>›</span> Следи за этим PR и чини падения CI и замечания ревью</div>
+        </article>
+        <article class="case">
+          <span class="chip c-session">С телефона</span>
+          <h3>Задача на ходу</h3>
+          <p>Вкладка Code в приложении Claude: поставить задачу, ответить на вопрос Claude, посмотреть дифф и открыть PR без ноутбука.</p>
+          <div class="case-prompt"><span>›</span> Добавь пагинацию в список заказов</div>
+        </article>
+      </div>
+      <h3 class="sub sub-gap">На автопилоте: задачи по расписанию, API и событиям GitHub</h3>
+      <div class="cases cols-3">
+        <article class="case">
+          <span class="chip c-sched">Расписание</span>
+          <h3>Разбор бэклога</h3>
+          <p>Каждый будний вечер Claude читает новые задачи в трекере, ставит метки, назначает ответственных по затронутому коду и присылает сводку в Slack.</p>
+          <div class="case-prompt"><span>›</span> разметь новые задачи и пришли сводку</div>
+        </article>
+        <article class="case">
+          <span class="chip c-api">API</span>
+          <h3>Разбор алертов</h3>
+          <p>Система мониторинга вызывает задачу при превышении порога ошибок. Claude сопоставляет стектрейс со свежими коммитами и открывает черновой PR с исправлением.</p>
+          <div class="case-prompt"><span>›</span> разберись с алертом из payload</div>
+        </article>
+        <article class="case">
+          <span class="chip c-github">GitHub</span>
+          <h3>Своё код-ревью</h3>
+          <p>На каждый новый PR Claude проходит по чек-листу команды и оставляет комментарии про безопасность, производительность и стиль. Людям остаётся дизайн.</p>
+          <div class="case-prompt"><span>›</span> событие pull_request.opened</div>
+        </article>
+        <article class="case">
+          <span class="chip c-api">API</span>
+          <h3>Проверка деплоя</h3>
+          <p>CD-пайплайн вызывает задачу после выкатки. Claude прогоняет smoke-проверки, смотрит логи на регрессии и пишет в релизный канал «можно» или «стоп».</p>
+          <div class="case-prompt"><span>›</span> проверь свежий деплой</div>
+        </article>
+        <article class="case">
+          <span class="chip c-sched">Расписание</span>
+          <h3>Устаревшая документация</h3>
+          <p>Раз в неделю Claude просматривает слитые PR, находит документацию с изменившимися API и открывает PR с правками.</p>
+          <div class="case-prompt"><span>›</span> найди устаревшие места в доках</div>
+        </article>
+        <article class="case">
+          <span class="chip c-github">GitHub</span>
+          <h3>Портирование библиотеки</h3>
+          <p>После слияния PR в одном SDK Claude переносит изменение в SDK на другом языке и открывает такой же PR.</p>
+          <div class="case-prompt"><span>›</span> событие pull_request.closed, только слитые</div>
+        </article>
       </div>
     </section>
 
