@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Что умеет Claude Code в облачном режиме: стек, процесс работы, железо и ограничения.">
+  <meta name="description" content="Всё про облачный режим Claude Code: где запускать, что установлено, окружения и сеть, GitHub и авто-фикс PR, команды терминала, лимиты, безопасность и тарифы.">
   <meta name="color-scheme" content="dark light">
   <title>Claude Code в облаке</title>
   <meta name="claude:viewport-fit-sides" content="cover">
@@ -13,6 +13,7 @@
   <script type="module" src="/src/main.js"></script>
 </head>
 <body>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
   <div class="sky" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
   <div class="grain" aria-hidden="true"></div>
 
@@ -22,86 +23,118 @@
       <div class="status"><span class="dot" aria-hidden="true"></span>сессия активна · claude/sleepy-goldberg-p9p4bc</div>
     </header>
 
-    <main>
-      <div class="hero">
-        <div>
-          <div class="eyebrow rise">Облачный режим</div>
-          <h1 class="rise d1">Пишете задачу.<br><span class="shine">Код пишется сам.</span></h1>
-          <p class="lede rise d2">Claude работает в своём облачном контейнере с вашим репозиторием: пишет код, запускает тесты, проверяет в браузере и пушит в GitHub. Можно ставить задачи с телефона.</p>
-          <div class="cta rise d3">
-            <a class="btn primary" href="#can">Что умеет</a>
-            <a class="btn" href="#limits">Где границы</a>
-          </div>
-        </div>
-
-        <div class="term rise d2" role="img" aria-label="Пример сессии: задача, запись файлов, проверка в браузере, коммит и пуш">
-          <div class="term-bar"><i></i><i></i><i></i><span>~/lowcode — claude</span></div>
-          <div class="term-body" id="term"><span class="t-user">› сделай прикольную страницу про облачный режим</span>
-
-<span class="t-dim">  ● читаю репозиторий nrgman108/lowcode</span>
-<span class="t-acc">  ✎ Write</span> index.html  <span class="t-dim">+430 строк</span>
-<span class="t-acc">  ✎ Write</span> README.md   <span class="t-dim">+20 строк</span>
-<span class="t-cy">  ◐ chromium</span> скриншот 1280px и 390px
-<span class="t-ok">  ✓ вёрстка без переполнений</span>
-<span class="t-acc">  ⎇ git</span> commit -m "Лендинг облачного режима"
-<span class="t-acc">  ⇡ git</span> push -u origin claude/sleepy-goldberg-p9p4bc
-<span class="t-ok">  ✓ готово · ссылка на страницу опубликована</span>
-<span class="caret"></span></div>
+    <div class="hero">
+      <div>
+        <div class="eyebrow rise">Облачный режим</div>
+        <h1 class="rise d1">Пишете задачу.<br><span class="shine">Код пишется сам.</span></h1>
+        <p class="lede rise d2">Claude Code работает на облачной виртуальной машине с вашим репозиторием: пишет код, запускает тесты, проверяет в браузере и пушит в GitHub. Сессия продолжается, даже если вы закрыли ноутбук, а следить за ней можно с любого устройства.</p>
+        <div class="cta rise d3">
+          <a class="btn primary" href="#where">С чего начать</a>
+          <a class="btn" href="#cli">Шпаргалка команд</a>
         </div>
       </div>
-    </main>
+
+      <div class="term rise d2" role="img" aria-label="Пример сессии: задача, запись файлов, сборка, проверка в браузере, коммит и пуш">
+        <div class="term-bar"><i></i><i></i><i></i><span>~/lowcode — claude</span></div>
+        <div class="term-body" id="term"><span class="t-user">› расскажи на странице всё про облачный режим</span>
+
+<span class="t-dim">  ● читаю документацию code.claude.com</span>
+<span class="t-acc">  ✎ Write</span> index.html
+<span class="t-acc">  ✎ Edit</span>  src/styles.css
+<span class="t-cy">  ▸ npm</span> run build  <span class="t-dim">8 КБ gzip</span>
+<span class="t-cy">  ◐ chromium</span> скриншоты 1280px и 390px
+<span class="t-ok">  ✓ без переполнений и ошибок в консоли</span>
+<span class="t-acc">  ⇡ git</span> push -u origin claude/sleepy-goldberg-p9p4bc
+<span class="t-ok">  ✓ Vercel подхватит пуш и выкатит сайт</span>
+<span class="caret"></span></div>
+      </div>
+    </div>
   </div>
 
   <div class="marquee" aria-hidden="true">
     <div class="track">
-      <span>Node 22</span><span>Python 3.13</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Go</span><span>Rust</span><span>Java</span><span>Ruby</span><span>PHP 8.3</span><span>Docker</span><span>Playwright</span><span>Chromium</span>
-      <span>Node 22</span><span>Python 3.13</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Go</span><span>Rust</span><span>Java</span><span>Ruby</span><span>PHP 8.3</span><span>Docker</span><span>Playwright</span><span>Chromium</span>
+      <span>Ubuntu 24.04</span><span>Node 20 · 21 · 22</span><span>Python 3</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Docker Compose</span><span>Go</span><span>Rust</span><span>OpenJDK 21</span><span>Ruby 3.3</span><span>PHP 8.3</span><span>GCC · Clang</span><span>Chromium</span>
+      <span>Ubuntu 24.04</span><span>Node 20 · 21 · 22</span><span>Python 3</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Docker Compose</span><span>Go</span><span>Rust</span><span>OpenJDK 21</span><span>Ruby 3.3</span><span>PHP 8.3</span><span>GCC · Clang</span><span>Chromium</span>
     </div>
   </div>
 
-  <div class="wrap">
+  <nav class="nav" aria-label="Разделы страницы">
+    <div class="nav-inner">
+      <a href="#where">Где запускать</a>
+      <a href="#can">Возможности</a>
+      <a href="#cli">Терминал</a>
+      <a href="#env">Окружение</a>
+      <a href="#tools">Инструменты</a>
+      <a href="#github">GitHub</a>
+      <a href="#sessions">Сессии</a>
+      <a href="#auto">Автоматизация</a>
+      <a href="#carry">Настройки</a>
+      <a href="#limits">Лимиты</a>
+      <a href="#security">Безопасность</a>
+      <a href="#plans">Тарифы</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <section id="where">
+      <div class="sec-head">
+        <div class="eyebrow">Где запускать</div>
+        <h2>Одна сессия, любое устройство</h2>
+        <p>Облачную сессию можно начать откуда угодно, а продолжить с другого устройства. Всё работает на инфраструктуре Anthropic, отдельной платы за виртуальную машину нет.</p>
+      </div>
+      <div class="surfaces">
+        <div class="surface"><b>Браузер</b><span>claude.ai/code. Список сессий, дифф, PR и настройки окружений.</span></div>
+        <div class="surface"><b>Телефон</b><span>Вкладка Code в приложении Claude. Ставить задачи и следить за ними можно на ходу.</span></div>
+        <div class="surface"><b>Desktop-приложение</b><span>В селекторе окружения выберите облачное, в разделе Cloud.</span></div>
+        <div class="surface"><b>Терминал</b><span><code>claude --cloud "задача"</code> создаёт облачную сессию для текущего репозитория.</span></div>
+        <div class="surface"><b>По расписанию</b><span>Задачи по расписанию, по API или по событиям GitHub. Каждый запуск идёт отдельной облачной сессией.</span></div>
+        <div class="surface"><b>Slack</b><span>Claude Tag: @Claude в рабочем Slack на той же облачной инфраструктуре.</span></div>
+      </div>
+    </section>
+
     <section id="can">
       <div class="sec-head">
         <div class="eyebrow">Возможности</div>
-        <h2>Полный стек в одном контейнере</h2>
-        <p>Всё нужное уже установлено. Claude сам ставит пакеты, поднимает сервисы и проверяет результат.</p>
+        <h2>Полный стек в одной машине</h2>
+        <p>Языки, базы и браузер уже установлены. Claude сам ставит пакеты, поднимает сервисы и проверяет результат, а вы получаете готовый коммит.</p>
       </div>
       <div class="grid">
         <article class="card">
           <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div>
           <h3>Фронтенд</h3>
-          <p>Страницы, приложения на React и Vue, сборка через Vite. Вёрстка проверяется на десктопе и на телефоне.</p>
-          <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">React</span><span class="tag">Vite</span></div>
+          <p>Страницы и приложения на React, Vue, Svelte, сборка через Vite. Вёрстка проверяется на ширине компьютера и телефона.</p>
+          <div class="tags"><span class="tag">npm</span><span class="tag">pnpm</span><span class="tag">yarn</span><span class="tag">eslint</span><span class="tag">prettier</span></div>
         </article>
         <article class="card">
           <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/></svg></div>
           <h3>Бэкенд</h3>
-          <p>API на Express, FastAPI или Go. Сервер запускается прямо в контейнере, и Claude дёргает его запросами.</p>
-          <div class="tags"><span class="tag">Node</span><span class="tag">Python</span><span class="tag">Go</span><span class="tag">Rust</span></div>
+          <p>API на Node, Python, Go, Java, Rust, Ruby или PHP. Сервер запускается прямо в машине, и Claude проверяет его запросами и тестами.</p>
+          <div class="tags"><span class="tag">pytest</span><span class="tag">Maven</span><span class="tag">Gradle</span><span class="tag">cargo</span></div>
         </article>
         <article class="card">
           <div class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
-          <h3>Базы данных</h3>
-          <p>Локальные PostgreSQL и Redis для разработки: схемы, миграции, запросы и тесты на живой базе.</p>
-          <div class="tags"><span class="tag">PostgreSQL 16</span><span class="tag">Redis 7</span><span class="tag">SQLite</span></div>
+          <h3>Базы и сервисы</h3>
+          <p>PostgreSQL 16 и Redis 7 установлены, но не запущены: Claude стартует их по просьбе. Остальное поднимается через <code>docker compose up</code>.</p>
+          <div class="tags"><span class="tag">PostgreSQL 16</span><span class="tag">Redis 7</span><span class="tag">Docker</span></div>
         </article>
         <article class="card">
           <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></div>
           <h3>Свой браузер</h3>
-          <p>Chromium с Playwright: Claude открывает ваше приложение, кликает по кнопкам и присылает скриншоты.</p>
-          <div class="tags"><span class="tag">Chromium</span><span class="tag">Playwright</span></div>
+          <p>Chromium с Playwright: Claude открывает приложение, кликает по кнопкам, проверяет консоль и присылает скриншоты.</p>
+          <div class="tags"><span class="tag">Chromium</span><span class="tag">Playwright</span><span class="tag">chromedriver</span></div>
         </article>
         <article class="card">
           <div class="ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 8.5v7M18 11.5c0 3-3 4-9.5 5"/></svg></div>
           <h3>Git и GitHub</h3>
-          <p>Коммиты и пуш в рабочую ветку, пулл-реквесты по просьбе. Может следить за CI и отвечать на ревью.</p>
-          <div class="tags"><span class="tag">commit</span><span class="tag">push</span><span class="tag">PR</span><span class="tag">CI</span></div>
+          <p>Коммиты и пуш в рабочую ветку, пулл-реквесты по просьбе. Может следить за PR, чинить упавший CI и отвечать на ревью.</p>
+          <div class="tags"><span class="tag">commit</span><span class="tag">push</span><span class="tag">PR</span><span class="tag">auto-fix</span></div>
         </article>
         <article class="card">
           <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div>
-          <h3>Публикация</h3>
-          <p>Страница уходит приватной ссылкой на claude.ai, а через подключённый Vercel можно задеплоить проект на публичный адрес.</p>
-          <div class="tags"><span class="tag">Artifact</span><span class="tag">Vercel</span></div>
+          <h3>Коннекторы и публикация</h3>
+          <p>Подключённые сервисы (Vercel, Google Drive и другие) работают через коннекторы. Страницы можно публиковать приватной ссылкой на claude.ai.</p>
+          <div class="tags"><span class="tag">MCP</span><span class="tag">Artifact</span><span class="tag">Vercel</span></div>
         </article>
       </div>
     </section>
@@ -112,30 +145,315 @@
         <h2>От сообщения до пуша</h2>
       </div>
       <div class="flow">
-        <div class="step"><h3>Вы пишете задачу</h3><p>Из браузера, приложения или с телефона. Обычным языком.</p></div>
-        <div class="step"><h3>Контейнер стартует</h3><p>Свежий клон репозитория в изолированной песочнице.</p></div>
-        <div class="step"><h3>Claude работает</h3><p>Читает код, пишет файлы, запускает команды и тесты.</p></div>
-        <div class="step"><h3>Проверка</h3><p>Тесты, линтер, скриншоты в браузере. Сначала доказать, потом пушить.</p></div>
-        <div class="step"><h3>Пуш в ветку</h3><p>Изменения в GitHub, а по просьбе ещё и пулл-реквест.</p></div>
+        <div class="step"><h3>Вы пишете задачу</h3><p>Из браузера, приложения, терминала или с телефона. Обычным языком.</p></div>
+        <div class="step"><h3>Машина стартует</h3><p>Свежая виртуальная машина на Ubuntu 24.04, клон репозитория, ваш setup-скрипт.</p></div>
+        <div class="step"><h3>Claude работает</h3><p>Читает код, пишет файлы, запускает команды, при необходимости делит работу между субагентами.</p></div>
+        <div class="step"><h3>Проверка</h3><p>Тесты, линтер, сборка, скриншоты в браузере. Сначала доказать, потом пушить.</p></div>
+        <div class="step"><h3>Пуш и ревью</h3><p>Изменения в ветке, дифф в карточке Changes, пулл-реквест по кнопке.</p></div>
+      </div>
+    </section>
+
+    <section id="cli">
+      <div class="sec-head">
+        <div class="eyebrow">Терминал и облако</div>
+        <h2>Шпаргалка команд</h2>
+        <p>Нужен Claude Code CLI, вошедший в тот же аккаунт claude.ai. Облачная машина клонирует ваш репозиторий с GitHub на текущей ветке, поэтому локальные коммиты сначала запушьте.</p>
+      </div>
+      <div class="cmds">
+        <div class="cmd">
+          <div class="cmd-head"><b>Отправить задачу в облако</b><button class="copy" type="button" data-copy="claude --cloud &quot;Почини баг авторизации в src/auth/login.ts&quot;">Копировать</button></div>
+          <pre><code>claude --cloud "Почини баг авторизации в src/auth/login.ts"</code></pre>
+          <p>Создаёт новую облачную сессию, а вы продолжаете работать локально. Старое написание <code>--remote</code> тоже работает.</p>
+        </div>
+        <div class="cmd">
+          <div class="cmd-head"><b>Несколько задач параллельно</b><button class="copy" type="button" data-copy="claude --cloud &quot;Почини нестабильный тест auth.spec.ts&quot;&#10;claude --cloud &quot;Обнови документацию API&quot;">Копировать</button></div>
+          <pre><code>claude --cloud "Почини нестабильный тест auth.spec.ts"
+claude --cloud "Обнови документацию API"</code></pre>
+          <p>Каждая команда запускает отдельную независимую сессию.</p>
+        </div>
+        <div class="cmd">
+          <div class="cmd-head"><b>Дописать в идущую сессию</b><button class="copy" type="button" data-copy="claude -p &quot;Теперь добавь тесты&quot; --cloud &lt;session-id&gt;">Копировать</button></div>
+          <pre><code>claude -p "Теперь добавь тесты" --cloud &lt;session-id&gt;</code></pre>
+          <p>Ставит сообщение в очередь сессии и сразу завершается. Подходит для скриптов и CI. Вместо ID можно передать ссылку claude.ai/code/…</p>
+        </div>
+        <div class="cmd">
+          <div class="cmd-head"><b>Забрать сессию в терминал</b><button class="copy" type="button" data-copy="claude --teleport">Копировать</button></div>
+          <pre><code>claude --teleport</code></pre>
+          <p>Подтягивает ветку и всю историю разговора. Внутри CLI: <code>/teleport</code> или <code>/tp</code>, а в <code>/tasks</code> клавиша <kbd>t</kbd>. Перенос односторонний: из облака в терминал.</p>
+        </div>
+        <div class="cmd">
+          <div class="cmd-head"><b>Сначала план, потом облако</b><button class="copy" type="button" data-copy="claude --permission-mode plan">Копировать</button></div>
+          <pre><code>claude --permission-mode plan</code></pre>
+          <p>Обсудите план локально, сохраните его в репозиторий и запушьте, затем отдайте выполнение в облако: <code>claude --cloud "Выполни план из docs/plan.md"</code>.</p>
+        </div>
+        <div class="cmd">
+          <div class="cmd-head"><b>Репозиторий не на GitHub</b><button class="copy" type="button" data-copy="CCR_FORCE_BUNDLE=1 claude --cloud &quot;Прогони тесты и почини падения&quot;">Копировать</button></div>
+          <pre><code>CCR_FORCE_BUNDLE=1 claude --cloud "Прогони тесты"</code></pre>
+          <p>Загружает локальный репозиторий архивом до 100 МБ вместе с незакоммиченными изменениями. Файлы вроде <code>.env</code> и ключей не уходят. Запушить обратно в GitLab или Bitbucket сессия не сможет.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="env">
+      <div class="sec-head">
+        <div class="eyebrow">Облачное окружение</div>
+        <h2>Сеть, переменные и setup-скрипт</h2>
+        <p>Окружение — это сохранённая конфигурация, в которой запускаются сессии. По умолчанию создаётся окружение Default с уровнем сети Trusted и без дополнительных настроек.</p>
+      </div>
+      <h3 class="sub">Уровни сетевого доступа</h3>
+      <div class="levels">
+        <div class="level"><b>None</b><span>Сеть закрыта.</span></div>
+        <div class="level is-default"><b>Trusted</b><span>Только белый список: реестры пакетов, GitHub, облачные SDK. Уровень по умолчанию.</span></div>
+        <div class="level"><b>Full</b><span>Любые домены.</span></div>
+        <div class="level"><b>Custom</b><span>Свой список доменов, по желанию плюс стандартный.</span></div>
+      </div>
+      <p class="note">При любом уровне доступны GitHub (через отдельный прокси), включённые коннекторы (их трафик идёт через серверы Anthropic) и API Anthropic. Новый уровень применяется к уже идущим сессиям примерно за минуту.</p>
+      <div class="env-grid">
+        <div class="panel">
+          <h3>Переменные окружения</h3>
+          <p>Задаются в настройках окружения. Их видит каждый, кто пользуется окружением, поэтому секреты туда не кладут. Так же меняются таймауты команд: <code>BASH_DEFAULT_TIMEOUT_MS</code>, <code>BASH_MAX_TIMEOUT_MS</code>.</p>
+        </div>
+        <div class="panel">
+          <h3>Сетевые секреты</h3>
+          <p>API-ключ хранится вне машины. Прокси Anthropic добавляет его к запросам на указанные хосты уже после того, как запрос покинул машину. Claude пользуется API, не видя ключа.</p>
+        </div>
+        <div class="panel">
+          <h3>Setup-скрипт</h3>
+          <p>Bash от root перед запуском Claude: <code>apt install</code>, тулчейны, <code>docker compose pull</code>. Должен завершиться с кодом 0. Если уложился примерно в 5 минут, файловая система кэшируется, и следующие сессии стартуют сразу. Кэш живёт около 7 дней.</p>
+        </div>
+        <div class="panel">
+          <h3>SessionStart-хук</h3>
+          <p>Хранится в <code>.claude/settings.json</code> репозитория и запускается при каждом старте сессии, локально и в облаке. Подходит для <code>npm install</code> и подготовки проекта.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tools">
+      <div class="sec-head">
+        <div class="eyebrow">Что установлено</div>
+        <h2>Инструменты из коробки</h2>
+        <p>Каждая сессия получает свежую машину на Ubuntu 24.04 (x86_64). Версии большинства инструментов покажет команда <code>check-tools</code>: попросите Claude её запустить.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Категория</th><th scope="col">Что входит</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Python</th><td>Python 3 с pip, poetry, uv, black, mypy, pytest, ruff</td></tr>
+            <tr><th scope="row">Node.js</th><td>20, 21 и 22 (по умолчанию 22) с npm, yarn, pnpm, bun, eslint, prettier, chromedriver</td></tr>
+            <tr><th scope="row">Ruby</th><td>3.1, 3.2, 3.3 с gem, bundler, rbenv</td></tr>
+            <tr><th scope="row">PHP</th><td>8.3 с Composer</td></tr>
+            <tr><th scope="row">Java</th><td>OpenJDK 21 с Maven и Gradle</td></tr>
+            <tr><th scope="row">Go</th><td>Go с поддержкой модулей</td></tr>
+            <tr><th scope="row">Rust</th><td>rustc и cargo</td></tr>
+            <tr><th scope="row">C/C++</th><td>GCC, Clang, cmake, ninja, conan</td></tr>
+            <tr><th scope="row">Docker</th><td>docker, dockerd, docker compose</td></tr>
+            <tr><th scope="row">Базы данных</th><td>PostgreSQL 16, Redis 7.0</td></tr>
+            <tr><th scope="row">Утилиты</th><td>git, gh, jq, yq, ripgrep, tmux, vim, nano</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Чего нет в списке (например, .NET SDK), ставится setup-скриптом. Пакеты, установленные посреди сессии, в другие сессии не переносятся.</p>
+    </section>
+
+    <section id="github">
+      <div class="sec-head">
+        <div class="eyebrow">GitHub</div>
+        <h2>Ветки, PR и авто-фикс</h2>
+        <p>Подключить GitHub можно двумя способами: через Claude GitHub App при онбординге или командой <code>/web-setup</code> из терминала, которая передаёт токен локального <code>gh</code>.</p>
+      </div>
+      <div class="env-grid">
+        <div class="panel">
+          <h3>GitHub-прокси</h3>
+          <ul class="list">
+            <li>Ваш настоящий токен никогда не попадает в машину: прокси подставляет его на своей стороне.</li>
+            <li>Нельзя удалять ветки и пушить теги, только ветки.</li>
+            <li>API доступен только для репозиториев, подключённых к сессии.</li>
+            <li>GraphQL закрыт, вместо него REST: <code>gh api repos/…</code></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Авто-фикс пулл-реквестов</h3>
+          <ul class="list">
+            <li>Claude подписывается на события PR: упавший CI и комментарии ревьюеров.</li>
+            <li>Если исправление очевидно, сам его пушит. Если неоднозначно, спрашивает вас.</li>
+            <li>Включается в меню PR в карточке Changes, командой <code>/autofix-pr</code> или просьбой «следи за этим PR».</li>
+            <li>Нужен установленный Claude GitHub App.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Ревью изменений</h3>
+          <ul class="list">
+            <li>Карточка Changes показывает +/− строк и открывает дифф.</li>
+            <li>Комментарии к строкам уходят Claude вместе со следующим сообщением.</li>
+            <li>Сравнение с любой веткой через Compare against.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Ссылка на сессию</h3>
+          <ul class="list">
+            <li>Коммиты получают трейлер <code>Claude-Session: &lt;url&gt;</code>.</li>
+            <li>В описание PR добавляется ссылка на сессию.</li>
+            <li>Отключается настройкой <code>attribution.sessionUrl: false</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="sessions">
+      <div class="sec-head">
+        <div class="eyebrow">Работа с сессиями</div>
+        <h2>Управление, контекст и шаринг</h2>
+      </div>
+      <div class="grid three">
+        <div class="panel">
+          <h3>Режимы прав</h3>
+          <p>Режим выбирается в выпадающем списке при создании задачи и меняется прямо во время работы. После перезапуска машины сессия продолжает в том же режиме.</p>
+        </div>
+        <div class="panel">
+          <h3>Контекст</h3>
+          <p><code>/compact</code> сжимает разговор, <code>/context</code> показывает содержимое окна, <code>/clear</code> начинает с чистого листа. При заполнении окна сжатие срабатывает автоматически.</p>
+        </div>
+        <div class="panel">
+          <h3>Команды</h3>
+          <p><code>/model sonnet</code>, <code>/effort</code>, <code>/rename</code> принимают значение аргументом. <code>/fast</code> включает быстрый режим. Чисто терминальные <code>/plugin</code> и <code>/resume</code> недоступны.</p>
+        </div>
+        <div class="panel">
+          <h3>Субагенты и команды агентов</h3>
+          <p>Субагенты работают так же, как локально, а агенты из <code>.claude/agents/</code> подхватываются сами. Команды агентов включаются переменной <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code>.</p>
+        </div>
+        <div class="panel">
+          <h3>Очередь сообщений</h3>
+          <p>Пока Claude работает, новое сообщение ждёт в очереди. Его можно забрать крестиком и отредактировать, пока Claude его не прочитал.</p>
+        </div>
+        <div class="panel">
+          <h3>Шаринг, архив, удаление</h3>
+          <p>Team и Enterprise делятся с командой, Pro и Max публикуют для любого вошедшего пользователя. Архив убирает сессию из списка, удаление стирает навсегда.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="auto">
+      <div class="sec-head">
+        <div class="eyebrow">Автоматизация</div>
+        <h2>Claude работает, пока вас нет</h2>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>Задачи по расписанию</h3>
+          <p>Промпт, репозитории и коннекторы, упакованные один раз. Запускаются по расписанию, HTTP-запросом с токеном или по событию GitHub, например при новом PR или релизе. Создаются на claude.ai/code/routines или командой <code>/schedule</code>.</p>
+        </article>
+        <article class="card">
+          <h3>Проекты</h3>
+          <p>Один разговор, в котором Claude сам запускает параллельные облачные сессии по вашим репозиториям, следит за ними и отчитывается.</p>
+        </article>
+        <article class="card">
+          <h3>Remote Control</h3>
+          <p>Обратная сторона: локальная сессия на вашем компьютере, которой можно управлять с телефона или из браузера. Подходит, когда нужны локальные файлы или мощное железо.</p>
+        </article>
+        <article class="card">
+          <h3>Ultrareview</h3>
+          <p>Глубокое ревью кода несколькими агентами в облачной песочнице.</p>
+        </article>
+        <article class="card">
+          <h3>Напоминания себе</h3>
+          <p>Claude может запланировать, когда вернуться к работе в этой же сессии: перепроверить CI, дождаться деплоя, продолжить после паузы.</p>
+        </article>
+        <article class="card">
+          <h3>Claude Tag в Slack</h3>
+          <p>@Claude в каналах Slack. Сессии из Slack автоматически видны команде.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="carry">
+      <div class="sec-head">
+        <div class="eyebrow">Что переносится из вашей настройки</div>
+        <h2>Работает всё, что закоммичено</h2>
+        <p>Сессия стартует со свежего клона, поэтому всё, что лежит только на вашем компьютере, в облако не попадает. Нужные настройки коммитьте в репозиторий.</p>
+      </div>
+      <div class="carry">
+        <div class="panel yes">
+          <h3>Доступно в облаке</h3>
+          <ul class="list">
+            <li><code>CLAUDE.md</code> и <code>.claude/rules/</code> репозитория</li>
+            <li>Хуки и права из <code>.claude/settings.json</code></li>
+            <li>MCP-серверы из <code>.mcp.json</code></li>
+            <li><code>.claude/skills/</code>, <code>agents/</code>, <code>commands/</code></li>
+            <li>Навыки, включённые на claude.ai</li>
+            <li>Настройки организации</li>
+          </ul>
+        </div>
+        <div class="panel no">
+          <h3>Остаётся на компьютере</h3>
+          <ul class="list">
+            <li>Личный <code>~/.claude/CLAUDE.md</code></li>
+            <li>Личные skills, agents и commands из <code>~/.claude/</code></li>
+            <li>Плагины из пользовательских настроек</li>
+            <li>MCP-серверы, добавленные без <code>--scope project</code></li>
+            <li>Интерактивный вход вроде AWS SSO</li>
+          </ul>
+        </div>
       </div>
     </section>
 
     <section id="limits">
       <div class="sec-head">
-        <div class="eyebrow">Железо и границы</div>
-        <h2>Что внутри и чего ждать</h2>
+        <div class="eyebrow">Железо и время</div>
+        <h2>Ресурсы и лимиты</h2>
       </div>
       <div class="split">
         <div class="specs">
-          <div class="spec"><b>4<small>ядра</small></b><span>для сборок, тестов и серверов</span></div>
-          <div class="spec"><b>15<small>ГБ RAM</small></b><span>хватит на базу, бэкенд и браузер разом</span></div>
-          <div class="spec"><b>8<small>языков</small></b><span>Node, Python, Go, Rust, Java, Ruby, PHP, Bash</span></div>
+          <div class="spec"><b>4<small>vCPU</small></b><span>для сборок, тестов и серверов</span></div>
+          <div class="spec"><b>16<small>ГБ RAM</small></b><span>хватит на базу, бэкенд и браузер разом</span></div>
+          <div class="spec"><b>30<small>ГБ диска</small></b><span>пространство на одну сессию</span></div>
         </div>
         <div class="limits">
-          <div class="limit"><span class="k">Временно</span><p>Контейнер удаляется после сессии. <strong>Остаётся только то, что запушено в GitHub.</strong></p></div>
-          <div class="limit"><span class="k">Изолировано</span><p>Запущенный сервер виден только внутри контейнера. Чтобы открыть его по ссылке, нужен деплой, например на Vercel.</p></div>
-          <div class="limit"><span class="k">Локальная БД</span><p>Postgres в контейнере подходит для разработки и тестов. Для постоянных данных нужна внешняя база: Neon, Supabase или Vercel Postgres.</p></div>
-          <div class="limit"><span class="k">Сеть</span><p>Выход в интернет идёт через прокси и зависит от сетевой политики окружения.</p></div>
+          <div class="limit"><span class="k">Команды</span><p>Claude ждёт команду <strong>2 минуты</strong>, может попросить до 10. Не уложившаяся команда уходит в фон и работает ещё до 30 минут.</p></div>
+          <div class="limit"><span class="k">Setup</span><p>Скрипт кэшируется, только если уложился примерно в <strong>5 минут</strong>.</p></div>
+          <div class="limit"><span class="k">Хуки</span><p>SessionStart-хук прерывается через <strong>600 секунд</strong>, если не задан свой таймаут.</p></div>
+          <div class="limit"><span class="k">Простой</span><p>Через несколько минут без активности машина засыпает с сохранёнными файлами, потом её могут освободить. При повторном открытии история разговора восстанавливается, а фоновые процессы нет.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security">
+      <div class="sec-head">
+        <div class="eyebrow">Безопасность</div>
+        <h2>Изоляция по слоям</h2>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <h3>Отдельная машина</h3>
+          <p>Каждая сессия работает в изолированной виртуальной машине, отделённой от вашего компьютера и от других сессий.</p>
+        </div>
+        <div class="panel">
+          <h3>Контроль сети</h3>
+          <p>Весь исходящий трафик идёт через прокси с защитой от вредных запросов и ограничением частоты. Сеть можно закрыть полностью.</p>
+        </div>
+        <div class="panel">
+          <h3>Ключи вне песочницы</h3>
+          <p>Git-учётные данные, ключи подписи и сетевые секреты не попадают в машину: прокси подставляет их снаружи.</p>
+        </div>
+      </div>
+      <p class="note">Даже при уровне сети None Claude Code общается с API Anthropic, поэтому данные теоретически могут покинуть машину этим путём.</p>
+    </section>
+
+    <section id="plans">
+      <div class="sec-head">
+        <div class="eyebrow">Тарифы и ограничения</div>
+        <h2>Кому доступно и чего ждать</h2>
+      </div>
+      <div class="split">
+        <div class="specs text">
+          <div class="spec"><b>Pro · Max · Team</b><span>облачные сессии включены</span></div>
+          <div class="spec"><b>Enterprise</b><span>для premium-мест и мест Chat + Claude Code</span></div>
+          <div class="spec"><b>Без доплат</b><span>за саму виртуальную машину: расход идёт из общих лимитов плана</span></div>
+        </div>
+        <div class="limits">
+          <div class="limit"><span class="k">Лимиты</span><p>Облачные сессии делят лимиты со всем остальным использованием Claude. Параллельные задачи расходуют их быстрее.</p></div>
+          <div class="limit"><span class="k">Платформа</span><p>Клонирование и PR работают только с GitHub, включая GitHub Enterprise Server на Team и Enterprise.</p></div>
+          <div class="limit"><span class="k">Организации</span><p>С Zero Data Retention, HIPAA или собственными ключами шифрования (CMEK) облачные сессии недоступны. С IP-allowlist нужно исключение от поддержки.</p></div>
+          <div class="limit"><span class="k">Временность</span><p>Машина одноразовая. <strong>Остаётся только то, что запушено в GitHub.</strong> Запущенный сервер снаружи не виден, для публичной ссылки нужен деплой.</p></div>
         </div>
       </div>
     </section>
@@ -143,14 +461,15 @@
     <div class="final">
       <div class="eyebrow">Попробуйте</div>
       <h2>Следующая задача уже в одной фразе</h2>
-      <p>Опишите, что нужно: Claude прочитает репозиторий, напишет код, проверит его и запушит в ветку.</p>
+      <p>Опишите, что нужно: Claude прочитает репозиторий, напишет код, проверит его и запушит в ветку. Подробности в документации на code.claude.com.</p>
       <div class="prompt"><span class="t-user">›</span> сделай API заметок на FastAPI + Postgres и покрой тестами</div>
+      <a class="btn primary" href="https://code.claude.com/docs/en/claude-code-on-the-web" target="_blank" rel="noopener">Открыть документацию</a>
     </div>
 
     <footer>
       <span>Тестовый проект в репозитории <code>nrgman108/lowcode</code></span>
       <span>Сделано Claude Code в облаке</span>
     </footer>
-  </div>
+  </main>
 </body>
 </html>
