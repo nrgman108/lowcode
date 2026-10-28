@@ -1,272 +1,43 @@
-<title>Claude Code в облаке</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
-<style>
-/* Layout: ночное «облако» — дрейфующее северное сияние за стеклянными панелями, терминал-герой, сетка возможностей, лента стека */
-:root {
-  --bg: #0b0d17;
-  --bg-2: #121628;
-  --fg: #eef0fa;
-  --muted: #9aa1c2;
-  --line: rgba(220, 226, 255, 0.12);
-  --glass: rgba(26, 31, 56, 0.55);
-  --coral: #ff7a59;
-  --amber: #ffb347;
-  --teal: #3fe0c5;
-  --ok: #5ee39a;
-  --aurora-a: rgba(255, 122, 89, 0.55);
-  --aurora-b: rgba(63, 224, 197, 0.40);
-  --aurora-c: rgba(255, 179, 71, 0.35);
-  --term-bg: rgba(8, 10, 20, 0.82);
-  --font-display: "Unbounded", "Arial Black", system-ui, sans-serif;
-  --font-body: "Onest", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  color-scheme: dark;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #f6f4fb; --bg-2: #ebe8f5; --fg: #171a2e; --muted: #555b7a;
-    --line: rgba(23, 26, 46, 0.12); --glass: rgba(255, 255, 255, 0.62);
-    --coral: #e2502d; --amber: #c77800; --teal: #0e9e88; --ok: #17924f;
-    --aurora-a: rgba(255, 122, 89, 0.38); --aurora-b: rgba(63, 224, 197, 0.32); --aurora-c: rgba(255, 179, 71, 0.32);
-    --term-bg: rgba(18, 21, 38, 0.92);
-    color-scheme: light;
-  }
-}
-:root[data-theme="light"] {
-  --bg: #f6f4fb; --bg-2: #ebe8f5; --fg: #171a2e; --muted: #555b7a;
-  --line: rgba(23, 26, 46, 0.12); --glass: rgba(255, 255, 255, 0.62);
-  --coral: #e2502d; --amber: #c77800; --teal: #0e9e88; --ok: #17924f;
-  --aurora-a: rgba(255, 122, 89, 0.38); --aurora-b: rgba(63, 224, 197, 0.32); --aurora-c: rgba(255, 179, 71, 0.32);
-  --term-bg: rgba(18, 21, 38, 0.92);
-  color-scheme: light;
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Что умеет Claude Code в облачном режиме: стек, процесс работы, железо и ограничения.">
+  <meta name="color-scheme" content="dark light">
+  <title>Claude Code в облаке</title>
+  <meta name="claude:viewport-fit-sides" content="cover">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
+  <div class="grain" aria-hidden="true"></div>
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font: 400 17px/1.6 var(--font-body);
-  overflow-x: hidden;
-}
+  <div class="wrap">
+    <header class="top">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Claude Code · Cloud</div>
+      <div class="status"><span class="dot" aria-hidden="true"></span>сессия активна · claude/sleepy-goldberg-p9p4bc</div>
+    </header>
 
-/* Сияние и зерно */
-.sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.blob { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(80px); opacity: .9; }
-.blob.a { background: radial-gradient(circle, var(--aurora-a), transparent 65%); top: -25vmax; left: -15vmax; animation: drift-a 22s ease-in-out infinite alternate; }
-.blob.b { background: radial-gradient(circle, var(--aurora-b), transparent 65%); top: 10vmax; right: -25vmax; animation: drift-b 26s ease-in-out infinite alternate; }
-.blob.c { background: radial-gradient(circle, var(--aurora-c), transparent 65%); bottom: -30vmax; left: 20vmax; animation: drift-c 30s ease-in-out infinite alternate; }
-@keyframes drift-a { to { transform: translate(18vmax, 12vmax) scale(1.15); } }
-@keyframes drift-b { to { transform: translate(-20vmax, 8vmax) scale(.9); } }
-@keyframes drift-c { to { transform: translate(-12vmax, -16vmax) scale(1.2); } }
-.grain {
-  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.wrap {
-  position: relative; z-index: 2;
-  max-width: 1120px; margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-
-/* Шапка */
-.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 24px; flex-wrap: wrap; }
-.brand { display: flex; align-items: center; gap: 10px; font: 700 15px/1 var(--font-display); letter-spacing: .02em; }
-.brand-mark { width: 28px; height: 28px; border-radius: 8px; background: conic-gradient(from 200deg, var(--coral), var(--amber), var(--teal), var(--coral)); animation: spin 8s linear infinite; }
-@keyframes spin { to { filter: hue-rotate(360deg); } }
-.status { display: inline-flex; align-items: center; gap: 8px; font: 500 13px/1 var(--font-mono); color: var(--muted); padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--glass); backdrop-filter: blur(12px); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 var(--ok); animation: ping 2s infinite; }
-@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 70%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
-
-/* Герой */
-.hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding-block: 40px 72px; }
-.hero > * { min-width: 0; }
-.eyebrow { font: 600 12px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .14em; color: var(--coral); }
-h1 {
-  font: 800 clamp(40px, 6.4vw, 76px)/1.02 var(--font-display);
-  letter-spacing: -.02em; margin: 16px 0 20px; text-wrap: balance;
-}
-.shine {
-  background: linear-gradient(100deg, var(--coral) 0%, var(--amber) 30%, var(--teal) 60%, var(--coral) 100%);
-  background-size: 250% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: shine 6s linear infinite;
-}
-@keyframes shine { to { background-position: -250% 0; } }
-.lede { font-size: 19px; color: var(--muted); max-width: 34ch; margin: 0 0 28px; }
-.cta { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: 14px;
-  font: 600 15px/1 var(--font-body); text-decoration: none; color: var(--fg);
-  border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(12px);
-  transition: transform .2s, border-color .2s;
-}
-.btn:hover { transform: translateY(-2px); border-color: var(--coral); }
-.btn.primary { background: var(--coral); color: #fff; border-color: transparent; box-shadow: 0 10px 30px -10px var(--coral); }
-.btn:focus-visible, a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
-
-/* Терминал */
-.term {
-  border-radius: 18px; background: var(--term-bg); border: 1px solid rgba(220, 226, 255, .14);
-  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 122, 89, .08);
-  backdrop-filter: blur(16px); overflow: hidden;
-  transform: perspective(1200px) rotateY(-6deg) rotateX(3deg);
-  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
-}
-.term:hover { transform: none; }
-.term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid rgba(220, 226, 255, .1); }
-.term-bar i { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
-.term-bar i:nth-child(2) { background: #febc2e; }
-.term-bar i:nth-child(3) { background: #28c840; }
-.term-bar span { margin-left: 10px; font: 400 12px/1 var(--font-mono); color: #8f96b8; }
-.term-body {
-  font: 400 13.5px/1.75 var(--font-mono); color: #d9ddf2; padding: 18px 20px 22px;
-  min-height: 330px; overflow-x: auto; white-space: pre;
-}
-.t-user { color: #ffb347; }
-.t-dim { color: #7d84a6; }
-.t-ok { color: #5ee39a; }
-.t-acc { color: #ff8f73; }
-.t-cy { color: #5ff0d6; }
-.caret { display: inline-block; width: 8px; height: 1.1em; background: #ff8f73; vertical-align: -3px; animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-
-/* Лента стека */
-.marquee { position: relative; z-index: 2; border-block: 1px solid var(--line); background: color-mix(in srgb, var(--bg-2) 60%, transparent); overflow: hidden; padding-block: 18px; }
-.track { display: flex; gap: 48px; width: max-content; animation: scroll 38s linear infinite; }
-.track span { font: 700 clamp(18px, 2.4vw, 26px)/1 var(--font-display); color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 48px; }
-.track span::after { content: "✦"; color: var(--coral); font-size: .7em; }
-@keyframes scroll { to { transform: translateX(-50%); } }
-
-/* Секции */
-section { padding-block: 88px 0; }
-.sec-head { display: grid; gap: 12px; margin-bottom: 36px; max-width: 640px; }
-h2 { font: 700 clamp(28px, 3.6vw, 42px)/1.1 var(--font-display); letter-spacing: -.01em; margin: 0; text-wrap: balance; }
-.sec-head p { margin: 0; color: var(--muted); }
-
-/* Карточки возможностей */
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.card {
-  --mx: 50%; --my: 50%;
-  position: relative; padding: 26px; border-radius: 20px;
-  background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px);
-  overflow: hidden; transition: transform .3s cubic-bezier(.2, .8, .2, 1);
-  display: grid; gap: 12px; align-content: start;
-}
-.card::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
-  background: radial-gradient(360px circle at var(--mx) var(--my), color-mix(in srgb, var(--coral) 22%, transparent), transparent 60%);
-}
-.card:hover { transform: translateY(-4px); }
-.card:hover::before { opacity: 1; }
-.ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--coral) 16%, transparent); color: var(--coral); }
-.card:nth-child(3n+2) .ico { background: color-mix(in srgb, var(--teal) 16%, transparent); color: var(--teal); }
-.card:nth-child(3n) .ico { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
-.ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.card h3 { font: 700 19px/1.25 var(--font-display); margin: 4px 0 0; }
-.card p { margin: 0; color: var(--muted); font-size: 15.5px; }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.tag { font: 500 12px/1 var(--font-mono); padding: 6px 9px; border-radius: 8px; border: 1px solid var(--line); color: var(--fg); background: color-mix(in srgb, var(--bg) 40%, transparent); }
-
-/* Как это работает */
-.flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; counter-reset: step; position: relative; }
-.step { position: relative; padding: 22px 18px; border-top: 2px solid var(--line); display: grid; gap: 8px; align-content: start; }
-.step::before {
-  counter-increment: step; content: counter(step, decimal-leading-zero);
-  font: 600 13px/1 var(--font-mono); color: var(--coral);
-}
-.step::after {
-  content: ""; position: absolute; top: -2px; left: 0; height: 2px; width: 0;
-  background: linear-gradient(90deg, var(--coral), var(--teal));
-  animation: fill 10s ease-in-out infinite;
-}
-.step:nth-child(2)::after { animation-delay: 1.6s; }
-.step:nth-child(3)::after { animation-delay: 3.2s; }
-.step:nth-child(4)::after { animation-delay: 4.8s; }
-.step:nth-child(5)::after { animation-delay: 6.4s; }
-@keyframes fill { 0% { width: 0; } 16%, 70% { width: 100%; } 85%, 100% { width: 100%; opacity: 0; } }
-.step h3 { font: 700 16px/1.3 var(--font-display); margin: 0; }
-.step p { margin: 0; color: var(--muted); font-size: 15px; }
-
-/* Железо + ограничения */
-.split { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; }
-.split > * { min-width: 0; }
-.specs { padding: 28px; border-radius: 20px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px); display: grid; gap: 22px; align-content: start; }
-.spec { display: grid; gap: 4px; }
-.spec b { font: 800 clamp(34px, 4.4vw, 52px)/1 var(--font-display); font-variant-numeric: tabular-nums; }
-.spec b small { font-size: .45em; color: var(--muted); font-weight: 500; margin-left: 6px; }
-.spec span { color: var(--muted); font-size: 14.5px; }
-.limits { display: grid; gap: 12px; }
-.limit { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 20px 22px; border-radius: 16px; border: 1px dashed var(--line); background: color-mix(in srgb, var(--bg-2) 45%, transparent); }
-.limit .k { font: 600 12px/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--amber); padding-top: 3px; white-space: nowrap; }
-.limit p { margin: 0; color: var(--muted); font-size: 15.5px; }
-.limit p strong { color: var(--fg); font-weight: 600; }
-
-/* Финал */
-.final { margin-top: 88px; padding: 56px clamp(20px, 5vw, 64px); border-radius: 28px; position: relative; overflow: hidden; border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(14px); display: grid; gap: 18px; justify-items: start; }
-.final::before { content: ""; position: absolute; inset: -40%; z-index: -1; background: conic-gradient(from 0deg, transparent, color-mix(in srgb, var(--coral) 30%, transparent), transparent 30%, color-mix(in srgb, var(--teal) 25%, transparent), transparent 60%); animation: rot 14s linear infinite; }
-@keyframes rot { to { transform: rotate(360deg); } }
-.final h2 { max-width: 18ch; }
-.final p { margin: 0; color: var(--muted); max-width: 52ch; }
-.prompt { font: 400 15px/1.5 var(--font-mono); padding: 14px 18px; border-radius: 12px; background: var(--term-bg); color: #d9ddf2; max-width: 100%; overflow-x: auto; }
-.prompt .t-user { color: #ffb347; }
-footer { padding-block: 40px 48px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-footer code { font-family: var(--font-mono); font-size: 13px; }
-
-/* Мягкое появление: элементы видимы сразу, только поднимаются */
-.rise { animation: rise .9s cubic-bezier(.2, .8, .2, 1) both; }
-.rise.d1 { animation-delay: .1s; } .rise.d2 { animation-delay: .2s; } .rise.d3 { animation-delay: .3s; }
-@keyframes rise { from { transform: translateY(18px); } to { transform: none; } }
-
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; gap: 36px; padding-block: 16px 56px; }
-  .term { transform: none; }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .flow { grid-template-columns: 1fr; }
-  .split { grid-template-columns: 1fr; }
-}
-@media (max-width: 600px) {
-  body { font-size: 16px; }
-  .grid { grid-template-columns: 1fr; }
-  .term-body { font-size: 12px; min-height: 300px; }
-  .limit { grid-template-columns: 1fr; gap: 6px; }
-  section { padding-block: 64px 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  .step::after { width: 100%; }
-}
-</style>
-
-<div class="sky" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
-<div class="grain" aria-hidden="true"></div>
-
-<div class="wrap">
-  <header class="top">
-    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Claude Code · Cloud</div>
-    <div class="status"><span class="dot" aria-hidden="true"></span>сессия активна · claude/sleepy-goldberg-p9p4bc</div>
-  </header>
-
-  <main>
-    <div class="hero">
-      <div>
-        <div class="eyebrow rise">Облачный режим</div>
-        <h1 class="rise d1">Пишете задачу.<br><span class="shine">Код пишется сам.</span></h1>
-        <p class="lede rise d2">Claude работает в своём облачном контейнере с вашим репозиторием: пишет код, запускает тесты, проверяет в браузере и пушит в GitHub. Можно ставить задачи с телефона.</p>
-        <div class="cta rise d3">
-          <a class="btn primary" href="#can">Что умеет</a>
-          <a class="btn" href="#limits">Где границы</a>
+    <main>
+      <div class="hero">
+        <div>
+          <div class="eyebrow rise">Облачный режим</div>
+          <h1 class="rise d1">Пишете задачу.<br><span class="shine">Код пишется сам.</span></h1>
+          <p class="lede rise d2">Claude работает в своём облачном контейнере с вашим репозиторием: пишет код, запускает тесты, проверяет в браузере и пушит в GitHub. Можно ставить задачи с телефона.</p>
+          <div class="cta rise d3">
+            <a class="btn primary" href="#can">Что умеет</a>
+            <a class="btn" href="#limits">Где границы</a>
+          </div>
         </div>
-      </div>
 
-      <div class="term rise d2" role="img" aria-label="Пример сессии: задача, запись файлов, проверка в браузере, коммит и пуш">
-        <div class="term-bar"><i></i><i></i><i></i><span>~/lowcode — claude</span></div>
-        <div class="term-body" id="term"><span class="t-user">› сделай прикольную страницу про облачный режим</span>
+        <div class="term rise d2" role="img" aria-label="Пример сессии: задача, запись файлов, проверка в браузере, коммит и пуш">
+          <div class="term-bar"><i></i><i></i><i></i><span>~/lowcode — claude</span></div>
+          <div class="term-body" id="term"><span class="t-user">› сделай прикольную страницу про облачный режим</span>
 
 <span class="t-dim">  ● читаю репозиторий nrgman108/lowcode</span>
 <span class="t-acc">  ✎ Write</span> index.html  <span class="t-dim">+430 строк</span>
@@ -277,158 +48,110 @@ footer code { font-family: var(--font-mono); font-size: 13px; }
 <span class="t-acc">  ⇡ git</span> push -u origin claude/sleepy-goldberg-p9p4bc
 <span class="t-ok">  ✓ готово · ссылка на страницу опубликована</span>
 <span class="caret"></span></div>
+        </div>
       </div>
-    </div>
-  </main>
-</div>
-
-<div class="marquee" aria-hidden="true">
-  <div class="track">
-    <span>Node 22</span><span>Python 3.13</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Go</span><span>Rust</span><span>Java</span><span>Ruby</span><span>PHP 8.3</span><span>Docker</span><span>Playwright</span><span>Chromium</span>
-    <span>Node 22</span><span>Python 3.13</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Go</span><span>Rust</span><span>Java</span><span>Ruby</span><span>PHP 8.3</span><span>Docker</span><span>Playwright</span><span>Chromium</span>
-  </div>
-</div>
-
-<div class="wrap">
-  <section id="can">
-    <div class="sec-head">
-      <div class="eyebrow">Возможности</div>
-      <h2>Полный стек в одном контейнере</h2>
-      <p>Всё нужное уже установлено. Claude сам ставит пакеты, поднимает сервисы и проверяет результат.</p>
-    </div>
-    <div class="grid">
-      <article class="card">
-        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div>
-        <h3>Фронтенд</h3>
-        <p>Страницы, приложения на React и Vue, сборка через Vite. Вёрстка проверяется на десктопе и на телефоне.</p>
-        <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">React</span><span class="tag">Vite</span></div>
-      </article>
-      <article class="card">
-        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/></svg></div>
-        <h3>Бэкенд</h3>
-        <p>API на Express, FastAPI или Go. Сервер запускается прямо в контейнере, и Claude дёргает его запросами.</p>
-        <div class="tags"><span class="tag">Node</span><span class="tag">Python</span><span class="tag">Go</span><span class="tag">Rust</span></div>
-      </article>
-      <article class="card">
-        <div class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
-        <h3>Базы данных</h3>
-        <p>Локальные PostgreSQL и Redis для разработки: схемы, миграции, запросы и тесты на живой базе.</p>
-        <div class="tags"><span class="tag">PostgreSQL 16</span><span class="tag">Redis 7</span><span class="tag">SQLite</span></div>
-      </article>
-      <article class="card">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></div>
-        <h3>Свой браузер</h3>
-        <p>Chromium с Playwright: Claude открывает ваше приложение, кликает по кнопкам и присылает скриншоты.</p>
-        <div class="tags"><span class="tag">Chromium</span><span class="tag">Playwright</span></div>
-      </article>
-      <article class="card">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 8.5v7M18 11.5c0 3-3 4-9.5 5"/></svg></div>
-        <h3>Git и GitHub</h3>
-        <p>Коммиты и пуш в рабочую ветку, пулл-реквесты по просьбе. Может следить за CI и отвечать на ревью.</p>
-        <div class="tags"><span class="tag">commit</span><span class="tag">push</span><span class="tag">PR</span><span class="tag">CI</span></div>
-      </article>
-      <article class="card">
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div>
-        <h3>Публикация</h3>
-        <p>Страница уходит приватной ссылкой на claude.ai, а через подключённый Vercel можно задеплоить проект на публичный адрес.</p>
-        <div class="tags"><span class="tag">Artifact</span><span class="tag">Vercel</span></div>
-      </article>
-    </div>
-  </section>
-
-  <section id="flow">
-    <div class="sec-head">
-      <div class="eyebrow">Как это работает</div>
-      <h2>От сообщения до пуша</h2>
-    </div>
-    <div class="flow">
-      <div class="step"><h3>Вы пишете задачу</h3><p>Из браузера, приложения или с телефона. Обычным языком.</p></div>
-      <div class="step"><h3>Контейнер стартует</h3><p>Свежий клон репозитория в изолированной песочнице.</p></div>
-      <div class="step"><h3>Claude работает</h3><p>Читает код, пишет файлы, запускает команды и тесты.</p></div>
-      <div class="step"><h3>Проверка</h3><p>Тесты, линтер, скриншоты в браузере. Сначала доказать, потом пушить.</p></div>
-      <div class="step"><h3>Пуш в ветку</h3><p>Изменения в GitHub, а по просьбе ещё и пулл-реквест.</p></div>
-    </div>
-  </section>
-
-  <section id="limits">
-    <div class="sec-head">
-      <div class="eyebrow">Железо и границы</div>
-      <h2>Что внутри и чего ждать</h2>
-    </div>
-    <div class="split">
-      <div class="specs">
-        <div class="spec"><b>4<small>ядра</small></b><span>для сборок, тестов и серверов</span></div>
-        <div class="spec"><b>15<small>ГБ RAM</small></b><span>хватит на базу, бэкенд и браузер разом</span></div>
-        <div class="spec"><b>8<small>языков</small></b><span>Node, Python, Go, Rust, Java, Ruby, PHP, Bash</span></div>
-      </div>
-      <div class="limits">
-        <div class="limit"><span class="k">Временно</span><p>Контейнер удаляется после сессии. <strong>Остаётся только то, что запушено в GitHub.</strong></p></div>
-        <div class="limit"><span class="k">Изолировано</span><p>Запущенный сервер виден только внутри контейнера. Чтобы открыть его по ссылке, нужен деплой, например на Vercel.</p></div>
-        <div class="limit"><span class="k">Локальная БД</span><p>Postgres в контейнере подходит для разработки и тестов. Для постоянных данных нужна внешняя база: Neon, Supabase или Vercel Postgres.</p></div>
-        <div class="limit"><span class="k">Сеть</span><p>Выход в интернет идёт через прокси и зависит от сетевой политики окружения.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="final">
-    <div class="eyebrow">Попробуйте</div>
-    <h2>Следующая задача уже в одной фразе</h2>
-    <p>Опишите, что нужно: Claude прочитает репозиторий, напишет код, проверит его и запушит в ветку.</p>
-    <div class="prompt"><span class="t-user">›</span> сделай API заметок на FastAPI + Postgres и покрой тестами</div>
+    </main>
   </div>
 
-  <footer>
-    <span>Тестовый проект в репозитории <code>nrgman108/lowcode</code></span>
-    <span>Сделано Claude Code в облаке</span>
-  </footer>
-</div>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Node 22</span><span>Python 3.13</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Go</span><span>Rust</span><span>Java</span><span>Ruby</span><span>PHP 8.3</span><span>Docker</span><span>Playwright</span><span>Chromium</span>
+      <span>Node 22</span><span>Python 3.13</span><span>PostgreSQL 16</span><span>Redis 7</span><span>Go</span><span>Rust</span><span>Java</span><span>Ruby</span><span>PHP 8.3</span><span>Docker</span><span>Playwright</span><span>Chromium</span>
+    </div>
+  </div>
 
-<script>
-(() => {
-  // Подсветка карточек за курсором
-  document.querySelectorAll('.card').forEach((card) => {
-    card.addEventListener('pointermove', (e) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-      card.style.setProperty('--my', `${e.clientY - r.top}px`);
-    });
-  });
+  <div class="wrap">
+    <section id="can">
+      <div class="sec-head">
+        <div class="eyebrow">Возможности</div>
+        <h2>Полный стек в одном контейнере</h2>
+        <p>Всё нужное уже установлено. Claude сам ставит пакеты, поднимает сервисы и проверяет результат.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div>
+          <h3>Фронтенд</h3>
+          <p>Страницы, приложения на React и Vue, сборка через Vite. Вёрстка проверяется на десктопе и на телефоне.</p>
+          <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">React</span><span class="tag">Vite</span></div>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/></svg></div>
+          <h3>Бэкенд</h3>
+          <p>API на Express, FastAPI или Go. Сервер запускается прямо в контейнере, и Claude дёргает его запросами.</p>
+          <div class="tags"><span class="tag">Node</span><span class="tag">Python</span><span class="tag">Go</span><span class="tag">Rust</span></div>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+          <h3>Базы данных</h3>
+          <p>Локальные PostgreSQL и Redis для разработки: схемы, миграции, запросы и тесты на живой базе.</p>
+          <div class="tags"><span class="tag">PostgreSQL 16</span><span class="tag">Redis 7</span><span class="tag">SQLite</span></div>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></div>
+          <h3>Свой браузер</h3>
+          <p>Chromium с Playwright: Claude открывает ваше приложение, кликает по кнопкам и присылает скриншоты.</p>
+          <div class="tags"><span class="tag">Chromium</span><span class="tag">Playwright</span></div>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 8.5v7M18 11.5c0 3-3 4-9.5 5"/></svg></div>
+          <h3>Git и GitHub</h3>
+          <p>Коммиты и пуш в рабочую ветку, пулл-реквесты по просьбе. Может следить за CI и отвечать на ревью.</p>
+          <div class="tags"><span class="tag">commit</span><span class="tag">push</span><span class="tag">PR</span><span class="tag">CI</span></div>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div>
+          <h3>Публикация</h3>
+          <p>Страница уходит приватной ссылкой на claude.ai, а через подключённый Vercel можно задеплоить проект на публичный адрес.</p>
+          <div class="tags"><span class="tag">Artifact</span><span class="tag">Vercel</span></div>
+        </article>
+      </div>
+    </section>
 
-  // Терминал: в HTML уже лежит полный текст, здесь он «перепечатывается» по кругу
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const term = document.getElementById('term');
-  const source = term.innerHTML.replace(/<span class="caret"><\/span>\s*$/, '');
-  const tmp = document.createElement('div');
-  tmp.innerHTML = source;
-  const nodes = [...tmp.childNodes];
-  const caret = '<span class="caret"></span>';
-  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    <section id="flow">
+      <div class="sec-head">
+        <div class="eyebrow">Как это работает</div>
+        <h2>От сообщения до пуша</h2>
+      </div>
+      <div class="flow">
+        <div class="step"><h3>Вы пишете задачу</h3><p>Из браузера, приложения или с телефона. Обычным языком.</p></div>
+        <div class="step"><h3>Контейнер стартует</h3><p>Свежий клон репозитория в изолированной песочнице.</p></div>
+        <div class="step"><h3>Claude работает</h3><p>Читает код, пишет файлы, запускает команды и тесты.</p></div>
+        <div class="step"><h3>Проверка</h3><p>Тесты, линтер, скриншоты в браузере. Сначала доказать, потом пушить.</p></div>
+        <div class="step"><h3>Пуш в ветку</h3><p>Изменения в GitHub, а по просьбе ещё и пулл-реквест.</p></div>
+      </div>
+    </section>
 
-  async function play() {
-    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-    await sleep(4000);
-    while (true) {
-      let html = '';
-      term.innerHTML = caret;
-      for (const node of nodes) {
-        const text = node.textContent;
-        const open = node.nodeType === 1 ? `<span class="${node.className}">` : '';
-        const close = node.nodeType === 1 ? '</span>' : '';
-        const typed = node.nodeType === 1 && node.className === 't-user';
-        if (typed) {
-          for (let i = 1; i <= text.length; i++) {
-            term.innerHTML = html + open + esc(text.slice(0, i)) + close + caret;
-            await sleep(32);
-          }
-        } else if (text.includes('\n')) {
-          await sleep(text.trim() ? 0 : 380);
-        }
-        html += open + esc(text) + close;
-        term.innerHTML = html + caret;
-      }
-      await sleep(5000);
-    }
-  }
-  play();
-})();
-</script>
+    <section id="limits">
+      <div class="sec-head">
+        <div class="eyebrow">Железо и границы</div>
+        <h2>Что внутри и чего ждать</h2>
+      </div>
+      <div class="split">
+        <div class="specs">
+          <div class="spec"><b>4<small>ядра</small></b><span>для сборок, тестов и серверов</span></div>
+          <div class="spec"><b>15<small>ГБ RAM</small></b><span>хватит на базу, бэкенд и браузер разом</span></div>
+          <div class="spec"><b>8<small>языков</small></b><span>Node, Python, Go, Rust, Java, Ruby, PHP, Bash</span></div>
+        </div>
+        <div class="limits">
+          <div class="limit"><span class="k">Временно</span><p>Контейнер удаляется после сессии. <strong>Остаётся только то, что запушено в GitHub.</strong></p></div>
+          <div class="limit"><span class="k">Изолировано</span><p>Запущенный сервер виден только внутри контейнера. Чтобы открыть его по ссылке, нужен деплой, например на Vercel.</p></div>
+          <div class="limit"><span class="k">Локальная БД</span><p>Postgres в контейнере подходит для разработки и тестов. Для постоянных данных нужна внешняя база: Neon, Supabase или Vercel Postgres.</p></div>
+          <div class="limit"><span class="k">Сеть</span><p>Выход в интернет идёт через прокси и зависит от сетевой политики окружения.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="final">
+      <div class="eyebrow">Попробуйте</div>
+      <h2>Следующая задача уже в одной фразе</h2>
+      <p>Опишите, что нужно: Claude прочитает репозиторий, напишет код, проверит его и запушит в ветку.</p>
+      <div class="prompt"><span class="t-user">›</span> сделай API заметок на FastAPI + Postgres и покрой тестами</div>
+    </div>
+
+    <footer>
+      <span>Тестовый проект в репозитории <code>nrgman108/lowcode</code></span>
+      <span>Сделано Claude Code в облаке</span>
+    </footer>
+  </div>
+</body>
+</html>
