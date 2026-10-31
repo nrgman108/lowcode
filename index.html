@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Всё про облачный режим Claude Code: где запускать, что установлено, окружения и сеть, GitHub и авто-фикс PR, команды терминала, лимиты, безопасность и тарифы.">
+  <meta name="description" content="Всё про облачный режим Claude Code: где запускать, как код попадает из локального репозитория в облако, что установлено, окружения и сеть, GitHub и авто-фикс PR, команды терминала, лимиты, безопасность, тарифы и кредиты.">
   <meta name="color-scheme" content="dark light">
   <title>Claude Code в облаке</title>
   <meta name="claude:viewport-fit-sides" content="cover">
@@ -63,6 +63,7 @@
       <a href="#where">Где запускать</a>
       <a href="#can">Возможности</a>
       <a href="#cases">Сценарии</a>
+      <a href="#sync">Локально ↔ облако</a>
       <a href="#cli">Терминал</a>
       <a href="#env">Окружение</a>
       <a href="#tools">Инструменты</a>
@@ -72,7 +73,7 @@
       <a href="#carry">Настройки</a>
       <a href="#limits">Лимиты</a>
       <a href="#security">Безопасность</a>
-      <a href="#plans">Тарифы</a>
+      <a href="#plans">Тарифы и расход</a>
     </div>
   </nav>
 
@@ -252,6 +253,83 @@
       </div>
     </section>
 
+    <section id="sync">
+      <div class="sec-head">
+        <div class="eyebrow">Локально и облако</div>
+        <h2>Как код попадает в облако</h2>
+        <p>Когда вы запускаете <code>claude --cloud</code> из локального Claude Code, облако по умолчанию берёт код <strong>с GitHub</strong>, а не из вашей папки. Обмен в обе стороны идёт через ветку.</p>
+      </div>
+
+      <figure class="sync-map" aria-labelledby="sync-caption">
+        <div class="node">
+          <span class="node-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></span>
+          <b>Ваш компьютер</b>
+          <span>локальный Claude Code</span>
+        </div>
+        <div class="wire" aria-hidden="true">
+          <span class="arrow fwd">git push</span>
+          <span class="arrow back">teleport</span>
+        </div>
+        <div class="node hub">
+          <span class="node-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 8.5v7M18 11.5c0 3-3 4-9.5 5"/></svg></span>
+          <b>GitHub</b>
+          <span>ветка как точка обмена</span>
+        </div>
+        <div class="wire" aria-hidden="true">
+          <span class="arrow fwd">clone</span>
+          <span class="arrow back">git push</span>
+        </div>
+        <div class="node">
+          <span class="node-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 18a5 5 0 0 1-.6-9.96A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9H7z"/></svg></span>
+          <b>Облачная VM</b>
+          <span>свежий клон, работа, пуш</span>
+        </div>
+        <figcaption id="sync-caption">Туда: вы пушите ветку, облако её клонирует. Обратно: облако пушит результат, а <code>claude --teleport</code> забирает ветку и историю разговора в ваш терминал.</figcaption>
+      </figure>
+
+      <div class="ways">
+        <article class="way">
+          <div class="way-head"><span class="badge badge-ok">По умолчанию</span><h3>Клон с GitHub</h3></div>
+          <p class="way-when">Когда репозиторий на GitHub и на нём установлен Claude GitHub App.</p>
+          <ul class="list">
+            <li>Клонируется ваш remote <strong>на текущей ветке</strong>.</li>
+            <li>Локальные коммиты <strong>сначала запушьте</strong>, иначе облако их не увидит.</li>
+            <li>Незакоммиченные правки в облако не попадают.</li>
+            <li>Если ветки нет на GitHub, CLI предупредит <code>Branch … is not on GitHub</code> и запустит сессию с последнего запушенного коммита или основной ветки.</li>
+          </ul>
+        </article>
+        <article class="way">
+          <div class="way-head"><span class="badge badge-warn">Особый случай</span><h3>Загрузка архивом</h3></div>
+          <p class="way-when">Когда нет git remote, когда GitHub App не установлен или задан <code>CCR_FORCE_BUNDLE=1</code>.</p>
+          <ul class="list">
+            <li>Уходит история всех веток и незакоммиченные правки в отслеживаемых файлах.</li>
+            <li>Новые файлы без <code>git add</code> не уходят.</li>
+            <li>На macOS, Linux и WSL правки в <code>.env</code>, <code>*.pem</code>, <code>id_rsa</code> остаются дома. На Windows такой фильтрации нет.</li>
+            <li>До 100 МБ, иначе только текущая ветка или снимок без истории. Запушить обратно можно только в GitHub.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="faq">
+        <details>
+          <summary>Можно перенести уже идущую локальную сессию в облако?</summary>
+          <p>Из CLI нет: перенос работает только из облака в терминал через <code>--teleport</code>. <code>--cloud</code> всегда создаёт новую сессию. Отправить локальную сессию в облако умеет Desktop-приложение, через меню <b>Open in</b>.</p>
+        </details>
+        <details>
+          <summary>Что нужно, чтобы забрать облачную сессию в терминал?</summary>
+          <p>Чистое рабочее дерево (иначе CLI предложит stash), копия того же репозитория, запушенная ветка сессии и тот же аккаунт claude.ai. Дальше в терминале вы работаете со своей копией сессии: облако её изменений не видит.</p>
+        </details>
+        <details>
+          <summary>А если задаче нужны именно мои локальные файлы?</summary>
+          <p>Тогда подойдёт Remote Control: сессия работает на вашем компьютере с вашими файлами, а управлять ею можно с телефона или из браузера. В облако при этом ничего не загружается.</p>
+        </details>
+        <details>
+          <summary>Попадает ли мой GitHub-токен в облачную машину?</summary>
+          <p>Нет. Git-операции идут через прокси, который подставляет токен на своей стороне. Внутри машины переменные <code>GH_TOKEN</code> и <code>GITHUB_TOKEN</code> содержат заглушку <code>proxy-injected</code>.</p>
+        </details>
+      </div>
+    </section>
+
     <section id="cli">
       <div class="sec-head">
         <div class="eyebrow">Терминал и облако</div>
@@ -409,12 +487,12 @@ claude --cloud "Обнови документацию API"</code></pre>
           <p>Режим выбирается в выпадающем списке при создании задачи и меняется прямо во время работы. После перезапуска машины сессия продолжает в том же режиме.</p>
         </div>
         <div class="panel">
-          <h3>Контекст</h3>
-          <p><code>/compact</code> сжимает разговор, <code>/context</code> показывает содержимое окна, <code>/clear</code> начинает с чистого листа. При заполнении окна сжатие срабатывает автоматически.</p>
+          <h3>Контекст и команды</h3>
+          <p><code>/compact</code>, <code>/context</code> и <code>/clear</code> работают как локально. <code>/model sonnet</code> и <code>/effort</code> принимают значение аргументом, <code>/fast</code> включает быстрый режим. <code>/plugin</code> и <code>/resume</code> недоступны.</p>
         </div>
         <div class="panel">
-          <h3>Команды</h3>
-          <p><code>/model sonnet</code>, <code>/effort</code>, <code>/rename</code> принимают значение аргументом. <code>/fast</code> включает быстрый режим. Чисто терминальные <code>/plugin</code> и <code>/resume</code> недоступны.</p>
+          <h3>Параллельность и worktree</h3>
+          <p>Каждая облачная сессия получает свою машину и свой клон, поэтому параллельным задачам git worktree не нужен. Внутри сессии он всё же есть: например, чтобы субагент работал в отдельной копии репозитория.</p>
         </div>
         <div class="panel">
           <h3>Субагенты и команды агентов</h3>
@@ -426,7 +504,7 @@ claude --cloud "Обнови документацию API"</code></pre>
         </div>
         <div class="panel">
           <h3>Шаринг, архив, удаление</h3>
-          <p>Team и Enterprise делятся с командой, Pro и Max публикуют для любого вошедшего пользователя. Архив убирает сессию из списка, удаление стирает навсегда.</p>
+          <p>Team и Enterprise делятся с командой, Pro, Max и Ultra публикуют для любого вошедшего пользователя. Архив убирает сессию из списка, удаление стирает навсегда.</p>
         </div>
       </div>
     </section>
@@ -450,8 +528,9 @@ claude --cloud "Обнови документацию API"</code></pre>
           <p>Обратная сторона: локальная сессия на вашем компьютере, которой можно управлять с телефона или из браузера. Подходит, когда нужны локальные файлы или мощное железо.</p>
         </article>
         <article class="card">
+          <span class="badge badge-warn">Платно после 3 запусков</span>
           <h3>Ultrareview</h3>
-          <p>Глубокое ревью кода несколькими агентами в облачной песочнице.</p>
+          <p>Глубокое ревью кода флотом агентов в облачной песочнице: <code>/code-review ultra</code>. Каждая находка проверяется воспроизведением. Занимает 5–15 минут.</p>
         </article>
         <article class="card">
           <h3>Напоминания себе</h3>
@@ -520,10 +599,14 @@ claude --cloud "Обнови документацию API"</code></pre>
         <div class="eyebrow">Безопасность</div>
         <h2>Изоляция по слоям</h2>
       </div>
-      <div class="grid">
+      <div class="env-grid sec-grid">
         <div class="panel">
           <h3>Отдельная машина</h3>
           <p>Каждая сессия работает в изолированной виртуальной машине, отделённой от вашего компьютера и от других сессий.</p>
+        </div>
+        <div class="panel">
+          <h3>MicroVM, а не контейнер</h3>
+          <p>Внутри видно, что это лёгкая VM на Firecracker под гипервизором KVM, со своим ядром Linux. Контейнеры делят ядро хоста, а здесь изоляция на уровне гипервизора, при этом машина стартует почти так же быстро, как контейнер.</p>
         </div>
         <div class="panel">
           <h3>Контроль сети</h3>
@@ -539,21 +622,56 @@ claude --cloud "Обнови документацию API"</code></pre>
 
     <section id="plans">
       <div class="sec-head">
-        <div class="eyebrow">Тарифы и ограничения</div>
-        <h2>Кому доступно и чего ждать</h2>
+        <div class="eyebrow">Тарифы и расход</div>
+        <h2>Сколько это стоит</h2>
+        <p>Отдельной платы за облачную машину нет. Платите вы за работу модели: токены облачной сессии списываются так же, как у локального Claude Code.</p>
       </div>
-      <div class="split">
-        <div class="specs text">
-          <div class="spec"><b>Pro · Max · Team</b><span>облачные сессии включены</span></div>
-          <div class="spec"><b>Enterprise</b><span>для premium-мест и мест Chat + Claude Code</span></div>
-          <div class="spec"><b>Без доплат</b><span>за саму виртуальную машину: расход идёт из общих лимитов плана</span></div>
-        </div>
-        <div class="limits">
-          <div class="limit"><span class="k">Лимиты</span><p>Облачные сессии делят лимиты со всем остальным использованием Claude. Параллельные задачи расходуют их быстрее.</p></div>
-          <div class="limit"><span class="k">Платформа</span><p>Клонирование и PR работают только с GitHub, включая GitHub Enterprise Server на Team и Enterprise.</p></div>
-          <div class="limit"><span class="k">Организации</span><p>С Zero Data Retention, HIPAA или собственными ключами шифрования (CMEK) облачные сессии недоступны. С IP-allowlist нужно исключение от поддержки.</p></div>
-          <div class="limit"><span class="k">Временность</span><p>Машина одноразовая. <strong>Остаётся только то, что запушено в GitHub.</strong> Запущенный сервер снаружи не виден, для публичной ссылки нужен деплой.</p></div>
-        </div>
+
+      <h3 class="sub">Кому доступно</h3>
+      <ul class="plan-chips" aria-label="Тарифы с облачными сессиями">
+        <li>Pro</li><li>Max</li><li>Ultra</li><li>Team</li><li>Enterprise <small>premium-места и Chat + Claude Code</small></li>
+      </ul>
+
+      <h3 class="sub sub-gap">В каком порядке списывается расход облачной сессии</h3>
+      <ol class="ladder">
+        <li class="rung">
+          <span class="rung-tag">Если есть</span>
+          <h4>Cloud session credits</h4>
+          <p>Временный бонусный кредит на аккаунте. Расходуется на облачные сессии автоматически и в первую очередь, лимит плана при этом не трогается.</p>
+          <div class="meter" role="img" aria-label="Пример: осталось 92 доллара из 100">
+            <div class="meter-row"><span>Included credit</span><span class="meter-val">$92 из $100</span></div>
+            <div class="meter-bar"><span style="--fill: 8%"></span></div>
+            <div class="meter-note">Пример из Settings → Usage. Кредит сгорает в указанную там дату.</div>
+          </div>
+        </li>
+        <li class="rung">
+          <span class="rung-tag">Всегда</span>
+          <h4>Лимит вашего плана</h4>
+          <p>Лимит текущей сессии и недельный лимит, общие для чата, локального Claude Code и облака. Параллельные облачные задачи расходуют их пропорционально быстрее.</p>
+        </li>
+        <li class="rung">
+          <span class="rung-tag">Если включены</span>
+          <h4>Usage credits</h4>
+          <p>Оплата сверх лимита плана. Включаются в Settings → Usage или командой <code>/usage-credits</code>. Без них работа просто ждёт сброса лимита.</p>
+        </li>
+      </ol>
+
+      <h3 class="sub sub-gap">Что всегда оплачивается отдельно</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Функция</th><th scope="col">Бесплатно</th><th scope="col">Потом</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Ultrareview</th><td>3 запуска на аккаунт (Pro, Max, Ultra), один раз и не обновляются</td><td>Примерно $5–25 за ревью в usage credits. Оценка видна перед запуском</td></tr>
+            <tr><th scope="row">Code Review</th><td>Нет</td><td>Usage credits организации, отдельно от лимитов плана</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sub sub-gap">Ограничения</h3>
+      <div class="limits">
+        <div class="limit"><span class="k">Платформа</span><p>Клонирование и PR работают только с GitHub, включая GitHub Enterprise Server на Team и Enterprise.</p></div>
+        <div class="limit"><span class="k">Организации</span><p>С Zero Data Retention, HIPAA или собственными ключами шифрования (CMEK) облачные сессии недоступны. С IP-allowlist нужно исключение от поддержки.</p></div>
+        <div class="limit"><span class="k">Временность</span><p>Машина одноразовая. <strong>Остаётся только то, что запушено в GitHub.</strong> Запущенный сервер снаружи не виден, для публичной ссылки нужен деплой.</p></div>
       </div>
     </section>
 
